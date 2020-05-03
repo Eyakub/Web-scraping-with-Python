@@ -24,3 +24,14 @@ class JobsSpider(scrapy.Spider):
     
             yield Request(absolute_next_url, callback=self.parse)
     
+    def parse_page(self, response):
+        url = response.meta.get('URL')
+        title = response.meta.get('Title')
+        address = response.meta.get('Address')
+
+        description = "".join(line for line in response.xpath('//*[@id="postingbody"]/text()').extract())
+
+        compensation = response.xpath('//p[@class="attrgroup"]/span[1]/b/text()').extract_first()
+        employment_type = response.xpath('//p[@class="attrgroup"]/span[2]/b/text()').extract_first()
+
+        yield{'URL': url, 'Title': title, 'Address':address, 'Description':description, 'Compensation':compensation, 'Employment Type':employment_type}
